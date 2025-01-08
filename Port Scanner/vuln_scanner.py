@@ -7,6 +7,9 @@ import sys
 import requests
 import os
 
+from scapy.layers.inet import IP, TCP
+
+
 def is_host_alive(target):
     try:
         ip = socket.gethostbyname(target)

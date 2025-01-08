@@ -5,6 +5,9 @@ from scapy.all import *
 from ipaddress import ip_network
 import sys
 
+from scapy.layers.inet import TCP, IP
+
+
 def is_host_alive(target):
     try:
         ip = socket.gethostbyname(target)
@@ -63,6 +66,26 @@ def print_progress_bar(completed, total, length=50):
     sys.stdout.flush()
 
 def main():
+    ascii_art = r"""
+___  ___         _____  _      _  _    _                         
+|  \/  |        /  ___|| |    (_)| |  | |                        
+| .  . | _   _  \ `--. | |__   _ | |_ | |_  _   _                
+| |\/| || | | |  `--. \| '_ \ | || __|| __|| | | |               
+| |  | || |_| | /\__/ /| | | || || |_ | |_ | |_| |               
+\_|  |_/ \__, | \____/ |_| |_||_| \__| \__| \__, |               
+          __/ |                              __/ |               
+         |___/                              |___/                
+______               _     _____                                 
+| ___ \             | |   /  ___|                                
+| |_/ /  ___   _ __ | |_  \ `--.   ___   __ _  _ __    ___  _ __ 
+|  __/  / _ \ | '__|| __|  `--. \ / __| / _` || '_ \  / _ \| '__|
+| |    | (_) || |   | |_  /\__/ /| (__ | (_| || | | ||  __/| |   
+\_|     \___/ |_|    \__| \____/  \___| \__,_||_| |_| \___||_|   
+                                                                 
+"""
+
+    print(ascii_art)
+
     target_input = input("Enter the target (IP/Hostname/Subnet): ")
     
     if '/' in target_input:

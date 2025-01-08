@@ -1,4 +1,6 @@
+
 import socket
+from concurrent.futures import ThreadPoolExecutor
 
 def is_host_alive(target):
     """
@@ -11,22 +13,28 @@ def is_host_alive(target):
     except socket.gaierror:
         return False
 
+def scan_port(target, port):
+    """
+    Scan a single port for a given target.
+    """
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        socket.setdefaulttimeout(1)
+        result = s.connect_ex((target, port))
+        if result == 0:
+            return port
+    return None
+
 def scan_ports(target, start_port, end_port):
     """
     Scan ports in the range [start_port, end_port] for a given target.
     """
     open_ports = []
-
-    for port in range(start_port, end_port + 1):
-        print(f"Scanning port {port}...", end='\r')
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        socket.setdefaulttimeout(1)
-
-        result = s.connect_ex((target, port))
-        if result == 0:
-            open_ports.append(port)
-        s.close()
-
+    with ThreadPoolExecutor(max_workers=100) as executor:
+        futures = [executor.submit(scan_port, target, port) for port in range(start_port, end_port + 1)]
+        for future in futures:
+            port = future.result()
+            if port:
+                open_ports.append(port)
     return open_ports
 
 def main():
@@ -49,3 +57,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
